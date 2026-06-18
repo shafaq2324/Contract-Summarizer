@@ -17,10 +17,14 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
+    "fs-extra": "^11.3.5",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.2.0",
     "nodemailer": "^9.0.0",
-    "pg": "^8.21.0"
+    "pdf-parse": "^1.1.1",
+    "pdf-poppler": "^0.2.3",
+    "pg": "^8.21.0",
+    "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

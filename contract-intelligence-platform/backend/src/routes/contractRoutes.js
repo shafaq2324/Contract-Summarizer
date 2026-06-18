@@ -6,6 +6,9 @@ const upload = require("../middleware/uploadMiddleware");
 
 const {
     uploadContract,
+    getAllContracts,
+    getContractById,
+    deleteContract,
 } = require("../controllers/contractController");
 
 router.post(
@@ -13,5 +16,10 @@ router.post(
     upload.single("contract"),
     uploadContract
 );
+router.get("/", getAllContracts);
+
+router.get("/:id", getContractById);
+
+router.delete("/:id", deleteContract);
 
 module.exports = router;
