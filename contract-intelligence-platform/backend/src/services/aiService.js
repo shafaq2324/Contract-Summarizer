@@ -4,7 +4,7 @@ const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY,
 });
 
-const MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
 exports.analyzeContract = async (contractText) => {
     if (!process.env.GROQ_API_KEY) {
@@ -12,23 +12,51 @@ exports.analyzeContract = async (contractText) => {
     }
 
     const prompt = `
-Return ONLY valid JSON.
+        Analyze the following contract.
 
-Extract:
-{
-  "contract_type": "",
-  "effective_date": "",
-  "expiry_date": "",
-  "parties": [],
-  "payment_terms": "",
-  "termination_clause": "",
-  "confidentiality_clause": "",
-  "liability_clause": ""
-}
+        Return ONLY valid JSON.
 
-Contract:
-${contractText}
-`;
+        {
+        "contract_type": "",
+        "effective_date": "",
+        "expiry_date": "",
+        "parties": [],
+        "payment_terms": "",
+        "termination_clause": "",
+        "confidentiality_clause": "",
+        "liability_clause": "",
+        "risk_level": "",
+        "risks": []
+        }
+
+        Instructions:
+        1. contract_type = type of agreement.
+        2. effective_date = contract start date.
+        3. expiry_date = contract end date.
+        4. parties = all parties involved.
+        5. payment_terms = summarize payment clauses.
+        6. termination_clause = summarize termination terms.
+        7. confidentiality_clause = summarize confidentiality terms.
+        8. liability_clause = summarize liability terms.
+        9. risk_level must be exactly one of:
+        - Low
+        - Medium
+        - High
+        10. risks must contain an array of legal or business risks.
+
+        Examples of risks:
+        - Missing confidentiality clause
+        - No termination clause
+        - Unclear payment obligations
+        - Unlimited liability
+        - Missing dispute resolution clause
+        - Missing governing law clause
+
+        Return ALL fields even if information is unavailable.
+
+        Contract:
+        ${contractText}
+        `;
 
     const completion = await groq.chat.completions.create({
         model: MODEL,
