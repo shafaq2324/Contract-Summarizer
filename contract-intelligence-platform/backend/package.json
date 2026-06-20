@@ -18,11 +18,13 @@
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
     "fs-extra": "^11.3.5",
+    "groq-sdk": "^0.30.0",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.2.0",
     "nodemailer": "^9.0.0",
     "pdf-parse": "^1.1.1",
     "pdf-poppler": "^0.2.3",
+    "pdf2pic": "^3.2.0",
     "pg": "^8.21.0",
     "tesseract.js": "^7.0.0"
   },

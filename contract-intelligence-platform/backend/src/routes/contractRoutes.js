@@ -9,6 +9,7 @@ const {
     getAllContracts,
     getContractById,
     deleteContract,
+    analyzeContractById,
 } = require("../controllers/contractController");
 
 router.post(
@@ -16,10 +17,25 @@ router.post(
     upload.single("contract"),
     uploadContract
 );
-router.get("/", getAllContracts);
 
-router.get("/:id", getContractById);
+router.post(
+    "/:id/analyze",
+    analyzeContractById
+);
 
-router.delete("/:id", deleteContract);
+router.get(
+    "/",
+    getAllContracts
+);
+
+router.get(
+    "/:id",
+    getContractById
+);
+
+router.delete(
+    "/:id",
+    deleteContract
+);
 
 module.exports = router;
