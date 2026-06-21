@@ -244,7 +244,7 @@ const ContractDetail = () => {
 
       {/* If contract has not been analyzed yet */}
       {!contract.hasAnalysis && (
-        <GlassCard hoverable={false} className="border-indigo-500/25 p-8 text-center space-y-5 flex flex-col items-center justify-center bg-indigo-500/5 glow-indigo">
+        <GlassCard hoverable={false} className="border-indigo-500/25 p-8 text-center space-y-5 flex flex-col items-center justify-center bg-indigo-500/5">
           <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.1)]">
             <Cpu className={`w-8 h-8 ${analyzing ? 'animate-spin' : ''}`} />
           </div>

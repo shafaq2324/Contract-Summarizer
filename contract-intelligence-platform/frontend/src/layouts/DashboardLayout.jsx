@@ -48,15 +48,11 @@ const DashboardLayout = () => {
 
   return (
     <div className="relative min-h-screen bg-slate-950 text-slate-100 overflow-hidden flex">
-      {/* Dynamic Background Mesh Gradients */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-500/10 blur-[120px] animate-pulse-slow pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/10 blur-[120px] animate-pulse-slower pointer-events-none" />
-      <div className="absolute top-[40%] left-[60%] w-[35%] h-[35%] rounded-full bg-fuchsia-500/5 blur-[100px] pointer-events-none" />
 
       {/* Sidebar Desktop */}
       <aside className="hidden lg:flex flex-col w-72 border-r border-white/5 glass-panel h-screen sticky top-0 z-30">
         <div className="p-6 border-b border-white/5 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.3)]">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#7C5CFF] to-[#9B7DFF] flex items-center justify-center shadow-[0_0_20px_rgba(143,107,255,0.35)]">
             <ShieldCheck className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -73,10 +69,10 @@ const DashboardLayout = () => {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all group cursor-pointer ${
+                className={`flex items-center justify-between px-4 py-3 rounded-full transition-all group cursor-pointer border ${
                   isActive
-                    ? 'bg-gradient-to-r from-indigo-500/15 to-purple-500/10 border-l-2 border-indigo-500 text-white font-medium shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                    ? 'bg-white/8 border-white/12 text-white font-medium shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border-transparent'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -132,14 +128,14 @@ const DashboardLayout = () => {
                   const isActive = location.pathname === item.path;
                   const Icon = item.icon;
                   return (
-                    <Link
+                     <Link
                       key={item.name}
                       to={item.path}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all ${
+                      className={`flex items-center justify-between px-4 py-3.5 rounded-full transition-all border ${
                         isActive
-                          ? 'bg-indigo-500/10 border-l-2 border-indigo-500 text-white font-medium'
-                          : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                          ? 'bg-white/8 border-white/12 text-white font-medium shadow-sm'
+                          : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border-transparent'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -163,7 +159,7 @@ const DashboardLayout = () => {
       {/* Main Panel Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header Bar */}
-        <header className="sticky top-0 z-20 flex items-center justify-between h-20 px-6 lg:px-8 border-b border-white/5 bg-slate-950/40 backdrop-blur-md">
+        <header className="sticky top-6 mx-6 lg:mx-8 z-20 flex items-center justify-between h-16 px-6 border border-white/8 bg-slate-900/60 backdrop-blur-xl rounded-2xl shadow-xl transition-all">
           {/* Header Left (Mobile Menu Button & Title) */}
           <div className="flex items-center gap-4">
             <button
@@ -199,7 +195,7 @@ const DashboardLayout = () => {
                 }}
                 className="flex items-center gap-2 p-1.5 pr-3.5 rounded-xl bg-slate-900/60 border border-white/5 hover:bg-slate-900/95 hover:border-white/10 transition-all cursor-pointer"
               >
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500/30 to-purple-600/30 border border-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-sm">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#7C5CFF]/30 to-[#9B7DFF]/30 border border-[#7C5CFF]/20 flex items-center justify-center text-[#9B7DFF] font-bold text-sm">
                   {userProfile?.name ? userProfile.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'U'}
                 </div>
                 <div className="text-left hidden md:block">

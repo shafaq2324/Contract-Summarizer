@@ -198,7 +198,7 @@ const Dashboard = () => {
       className="space-y-8"
     >
       {/* Welcome Banner & Actions */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-transparent border border-white/5 p-6 rounded-2xl glow-indigo relative overflow-hidden">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-transparent border border-white/5 p-6 rounded-2xl relative overflow-hidden">
         <div className="space-y-1.5 z-10">
           <div className="flex items-center gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider">
             <Sparkles className="w-4 h-4 animate-pulse" />
@@ -319,8 +319,8 @@ const Dashboard = () => {
               <BarChart data={barChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#6366f1" stopOpacity={0.8} />
-                    <stop offset="100%" stopColor="#a855f7" stopOpacity={0.2} />
+                    <stop offset="0%" stopColor="#7C5CFF" stopOpacity={0.8} />
+                    <stop offset="100%" stopColor="#9B7DFF" stopOpacity={0.2} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />

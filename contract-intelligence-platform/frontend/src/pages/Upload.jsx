@@ -167,7 +167,7 @@ const Upload = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 15 }}
           >
-            <GlassCard hoverable={false} className="border-indigo-500/25 p-6 space-y-6 glow-indigo relative overflow-hidden">
+            <GlassCard hoverable={false} className="border-indigo-500/25 p-6 space-y-6 relative overflow-hidden">
               <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                 <div className="p-2.5 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-indigo-400">
                   <ShieldCheck className="w-5.5 h-5.5" />

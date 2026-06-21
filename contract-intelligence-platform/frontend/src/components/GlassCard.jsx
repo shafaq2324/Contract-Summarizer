@@ -9,9 +9,7 @@ const GlassCard = ({
   glowColor = '', // 'indigo', 'purple', 'fuchsia', or empty
   ...props
 }) => {
-  const glowClass = glowColor === 'indigo' ? 'glow-indigo' : 
-                    glowColor === 'purple' ? 'glow-purple' : 
-                    glowColor === 'fuchsia' ? 'shadow-[0_0_40px_-5px_rgba(217,70,239,0.15)]' : '';
+  const glowClass = '';
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
