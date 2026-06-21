@@ -39,14 +39,31 @@ router.post(
     login
 );
 
+const pool = require("../config/db");
+
 router.get(
     "/profile",
     authMiddleware,
-    (req, res) => {
-        res.json({
-            message: "Protected route accessed",
-            user: req.user,
-        });
+    async (req, res) => {
+        try {
+            const userRes = await pool.query(
+                "SELECT id, name, email, role FROM users WHERE id = $1",
+                [req.user.id]
+            );
+            if (userRes.rows.length === 0) {
+                return res.status(404).json({
+                    message: "User not found",
+                });
+            }
+            res.json({
+                message: "Profile retrieved successfully",
+                user: userRes.rows[0],
+            });
+        } catch (err) {
+            res.status(500).json({
+                message: err.message,
+            });
+        }
     }
 );
 

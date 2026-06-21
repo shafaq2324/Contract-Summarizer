@@ -153,24 +153,49 @@ exports.forgotPassword = async (req, res) => {
         );
 
         const resetLink =
-            `http://localhost:3000/reset-password/${resetToken}`;
+            `http://localhost:5173/reset-password/${resetToken}`;
 
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: "Password Reset",
-            html: `
-                <p>Click the link below:</p>
-                <a href="${resetLink}">
-                    Reset Password
-                </a>
-            `,
-        });
+        try {
+            await transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: email,
+                subject: "Reset Your Password - ContractIQ",
+                html: `
+                    <div style="background-color: #0b0f19; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; text-align: center; color: #f1f5f9; min-height: 100%;">
+                      <div style="max-width: 480px; margin: 0 auto; background-color: #111827; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 32px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);">
+                        <div style="display: inline-block; width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #a855f7); color: #ffffff; line-height: 48px; font-size: 20px; font-weight: bold; margin-bottom: 20px;">
+                          IQ
+                        </div>
+                        <h2 style="font-size: 20px; font-weight: 700; margin-top: 0; margin-bottom: 12px; color: #ffffff; letter-spacing: -0.025em;">Reset Your Password</h2>
+                        <p style="font-size: 13px; color: #94a3b8; line-height: 1.6; margin-bottom: 24px; text-align: center;">
+                          We received a request to reset your ContractIQ workspace password. Click the button below to choose a new password. This link is valid for 60 minutes.
+                        </p>
+                        <a href="${resetLink}" style="display: inline-block; background: linear-gradient(135deg, #6366f1, #a855f7); color: #ffffff; text-decoration: none; padding: 12px 24px; font-size: 13px; font-weight: 600; border-radius: 10px; box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);">
+                          Reset Password
+                        </a>
+                        <div style="margin-top: 32px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 16px; font-size: 11px; color: #64748b; text-align: center;">
+                          If you did not make this request, you can safely ignore this email.
+                        </div>
+                      </div>
+                    </div>
+                `,
+            });
 
-        res.json({
-            message:
-                "Password reset email sent",
-        });
+            return res.json({
+                message: "Password reset email sent successfully.",
+            });
+        } catch (mailError) {
+            console.error("SMTP EMAIL SENDING FAILED:", mailError.message);
+            console.log("\n=======================================================");
+            console.log("🔑 MOCK PASSWORD RESET LINK FOR USER:", email);
+            console.log("🔗 LINK:", resetLink);
+            console.log("=======================================================\n");
+
+            return res.json({
+                message: "Password reset initiated successfully. (Check backend server console for the reset link).",
+                resetLink: resetLink,
+            });
+        }
 
     } catch (error) {
 
@@ -188,13 +213,13 @@ exports.resetPassword = async (req, res) => {
 
         const { password } = req.body;
 
-        const userResult = await pool.query(
+         const userResult = await pool.query(
             `SELECT *
              FROM users
              WHERE reset_token = $1
-             AND reset_token_expiry > NOW()`,
-            [token]
-        );
+             AND reset_token_expiry > $2`,
+            [token, new Date()]
+         );
 
         if (userResult.rows.length === 0) {
 

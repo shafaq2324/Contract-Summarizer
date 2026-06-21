@@ -127,7 +127,7 @@ exports.uploadContract = async (req, res) => {
                 req.file.originalname,
                 req.file.filename,
                 category,
-                1,
+                req.user.id,
                 extractedText,
                 processingType,
             ]
@@ -166,10 +166,13 @@ exports.getAllContracts = async (req, res) => {
     try {
         const contracts = await pool.query(
             `
-            SELECT *
-            FROM contracts
-            ORDER BY upload_date DESC
-            `
+            SELECT c.*, ca.contract_type, ca.risk_level, ca.parties
+            FROM contracts c
+            LEFT JOIN contract_analysis ca ON c.id = ca.contract_id
+            WHERE c.uploaded_by = $1
+            ORDER BY c.upload_date DESC
+            `,
+            [req.user.id]
         );
 
         res.status(200).json({
@@ -197,9 +200,9 @@ exports.getContractById = async (req, res) => {
             `
             SELECT *
             FROM contracts
-            WHERE id = $1
+            WHERE id = $1 AND uploaded_by = $2
             `,
-            [id]
+            [id, req.user.id]
         );
 
         if (contract.rows.length === 0) {
@@ -233,9 +236,9 @@ exports.deleteContract = async (req, res) => {
             `
             SELECT *
             FROM contracts
-            WHERE id = $1
+            WHERE id = $1 AND uploaded_by = $2
             `,
-            [id]
+            [id, req.user.id]
         );
 
         if (contract.rows.length === 0) {
@@ -264,9 +267,9 @@ exports.deleteContract = async (req, res) => {
         await pool.query(
             `
             DELETE FROM contracts
-            WHERE id = $1
+            WHERE id = $1 AND uploaded_by = $2
             `,
-            [id]
+            [id, req.user.id]
         );
 
         res.status(200).json({
@@ -292,9 +295,9 @@ exports.analyzeContractById = async (req, res) => {
             `
             SELECT *
             FROM contracts
-            WHERE id = $1
+            WHERE id = $1 AND uploaded_by = $2
             `,
-            [id]
+            [id, req.user.id]
         );
 
         if (contract.rows.length === 0) {
@@ -438,11 +441,12 @@ exports.getContractAnalysis = async (req, res) => {
 
         const analysis = await pool.query(
             `
-            SELECT *
-            FROM contract_analysis
-            WHERE contract_id = $1
+            SELECT ca.*
+            FROM contract_analysis ca
+            JOIN contracts c ON ca.contract_id = c.id
+            WHERE ca.contract_id = $1 AND c.uploaded_by = $2
             `,
-            [id]
+            [id, req.user.id]
         );
 
         if (analysis.rows.length === 0) {
@@ -467,35 +471,45 @@ exports.getContractAnalysis = async (req, res) => {
 exports.getDashboardStats = async (req, res) => {
     try {
         const totalContracts = await pool.query(
-            `SELECT COUNT(*) FROM contracts`
+            `SELECT COUNT(*) FROM contracts WHERE uploaded_by = $1`,
+            [req.user.id]
         );
 
         const totalAnalysis = await pool.query(
-            `SELECT COUNT(*) FROM contract_analysis`
+            `SELECT COUNT(*) FROM contract_analysis ca
+             JOIN contracts c ON ca.contract_id = c.id
+             WHERE c.uploaded_by = $1`,
+            [req.user.id]
         );
 
         const highRisk = await pool.query(
             `
             SELECT COUNT(*)
-            FROM contract_analysis
-            WHERE risk_level = 'High'
-            `
+            FROM contract_analysis ca
+            JOIN contracts c ON ca.contract_id = c.id
+            WHERE ca.risk_level = 'High' AND c.uploaded_by = $1
+            `,
+            [req.user.id]
         );
 
         const mediumRisk = await pool.query(
             `
             SELECT COUNT(*)
-            FROM contract_analysis
-            WHERE risk_level = 'Medium'
-            `
+            FROM contract_analysis ca
+            JOIN contracts c ON ca.contract_id = c.id
+            WHERE ca.risk_level = 'Medium' AND c.uploaded_by = $1
+            `,
+            [req.user.id]
         );
 
         const lowRisk = await pool.query(
             `
             SELECT COUNT(*)
-            FROM contract_analysis
-            WHERE risk_level = 'Low'
-            `
+            FROM contract_analysis ca
+            JOIN contracts c ON ca.contract_id = c.id
+            WHERE ca.risk_level = 'Low' AND c.uploaded_by = $1
+            `,
+            [req.user.id]
         );
 
         res.status(200).json({
@@ -534,17 +548,20 @@ exports.searchContracts = async (req, res) => {
                 c.category,
                 c.upload_date,
                 ca.contract_type,
-                ca.risk_level
+                ca.risk_level,
+                ca.parties
             FROM contracts c
             LEFT JOIN contract_analysis ca
             ON c.id = ca.contract_id
             WHERE
-                LOWER(c.title) LIKE LOWER($1)
-                OR LOWER(c.category) LIKE LOWER($1)
-                OR LOWER(COALESCE(ca.contract_type, '')) LIKE LOWER($1)
+                c.uploaded_by = $2 AND (
+                    LOWER(c.title) LIKE LOWER($1)
+                    OR LOWER(c.category) LIKE LOWER($1)
+                    OR LOWER(COALESCE(ca.contract_type, '')) LIKE LOWER($1)
+                )
             ORDER BY c.upload_date DESC
             `,
-            [`%${q}%`]
+            [`%${q}%`, req.user.id]
         );
 
         res.status(200).json({
@@ -573,9 +590,9 @@ exports.chatWithContract = async (
             `
             SELECT extracted_text
             FROM contracts
-            WHERE id = $1
+            WHERE id = $1 AND uploaded_by = $2
             `,
-            [id]
+            [id, req.user.id]
         );
 
         if (contract.rows.length === 0) {
@@ -620,9 +637,9 @@ exports.compareTwoContracts = async (
                 `
                 SELECT extracted_text
                 FROM contracts
-                WHERE id = $1
+                WHERE id = $1 AND uploaded_by = $2
                 `,
-                [contract1]
+                [contract1, req.user.id]
             );
 
         const second =
@@ -630,9 +647,9 @@ exports.compareTwoContracts = async (
                 `
                 SELECT extracted_text
                 FROM contracts
-                WHERE id = $1
+                WHERE id = $1 AND uploaded_by = $2
                 `,
-                [contract2]
+                [contract2, req.user.id]
             );
 
         if (
@@ -688,13 +705,16 @@ exports.getRecentContracts = async (
                     c.category,
                     c.upload_date,
                     ca.contract_type,
-                    ca.risk_level
+                    ca.risk_level,
+                    ca.parties
                 FROM contracts c
                 LEFT JOIN contract_analysis ca
                 ON c.id = ca.contract_id
+                WHERE c.uploaded_by = $1
                 ORDER BY c.upload_date DESC
                 LIMIT 5
-                `
+                `,
+                [req.user.id]
             );
 
         res.status(200).json({
@@ -722,11 +742,12 @@ exports.downloadReport = async (
         const analysis =
             await pool.query(
                 `
-                SELECT *
-                FROM contract_analysis
-                WHERE contract_id = $1
+                SELECT ca.*
+                FROM contract_analysis ca
+                JOIN contracts c ON ca.contract_id = c.id
+                WHERE ca.contract_id = $1 AND c.uploaded_by = $2
                 `,
-                [id]
+                [id, req.user.id]
             );
 
         if (
@@ -790,10 +811,12 @@ exports.getContractLogs = async (
             FROM audit_logs a
             JOIN users u
             ON a.user_id = u.id
-            WHERE a.contract_id = $1
+            JOIN contracts c
+            ON a.contract_id = c.id
+            WHERE a.contract_id = $1 AND c.uploaded_by = $2
             ORDER BY a.created_at DESC
             `,
-            [id]
+            [id, req.user.id]
         );
 
         res.status(200).json({

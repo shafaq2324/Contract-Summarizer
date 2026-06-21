@@ -27,13 +27,14 @@ const {
     getVersions,
 } = require("../controllers/versionController");
 
+// Protect all contract routes
+router.use(protect);
 
 // ======================
 // Upload Contract
 // ======================
 router.post(
     "/upload",
-    protect,
     upload.single("contract"),
     uploadContract
 );
@@ -44,13 +45,11 @@ router.post(
 // ======================
 router.get(
     "/dashboard/stats",
-    protect,
     getDashboardStats
 );
 
 router.get(
     "/dashboard/recent",
-    protect,
     getRecentContracts
 );
 
@@ -60,7 +59,6 @@ router.get(
 // ======================
 router.get(
     "/search",
-    protect,
     searchContracts
 );
 
@@ -70,7 +68,6 @@ router.get(
 // ======================
 router.post(
     "/compare",
-    protect,
     compareTwoContracts
 );
 
@@ -80,14 +77,12 @@ router.post(
 // ======================
 router.post(
     "/:id/version",
-    protect,
     upload.single("contract"),
     uploadVersion
 );
 
 router.get(
     "/:id/versions",
-    protect,
     getVersions
 );
 
@@ -97,13 +92,11 @@ router.get(
 // ======================
 router.post(
     "/:id/analyze",
-    protect,
     analyzeContractById
 );
 
 router.get(
     "/:id/analysis",
-    protect,
     getContractAnalysis
 );
 
@@ -113,7 +106,6 @@ router.get(
 // ======================
 router.post(
     "/:id/chat",
-    protect,
     chatWithContract
 );
 
@@ -123,13 +115,11 @@ router.post(
 // ======================
 router.get(
     "/:id/report",
-    protect,
     downloadReport
 );
 
 router.get(
     "/:id/logs",
-    protect,
     getContractLogs
 );
 
@@ -139,7 +129,6 @@ router.get(
 // ======================
 router.get(
     "/",
-    protect,
     getAllContracts
 );
 
@@ -149,7 +138,6 @@ router.get(
 // ======================
 router.get(
     "/:id",
-    protect,
     getContractById
 );
 
@@ -159,7 +147,6 @@ router.get(
 // ======================
 router.delete(
     "/:id",
-    protect,
     deleteContract
 );
 

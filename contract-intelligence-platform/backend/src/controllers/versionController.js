@@ -4,6 +4,7 @@ const path = require("path");
 const {
     extractTextFromPDF,
 } = require("../services/pdfService");
+const { logActivity } = require("../services/auditService");
 
 exports.uploadVersion = async (
     req,
@@ -77,6 +78,12 @@ exports.uploadVersion = async (
                 req.file.filename,
                 extractedText,
             ]
+        );
+
+        await logActivity(
+            req.user.id,
+            Number(id),
+            "New version uploaded (v" + versionNumber + ")"
         );
 
         res.status(201).json({
