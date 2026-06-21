@@ -33,7 +33,8 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`http://localhost:5000/api/auth/reset-password/${token}`, {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://contract-summarizer-gpra.onrender.com/api';
+      const response = await axios.post(`${API_URL}/auth/reset-password/${token}`, {
         password
       });
 

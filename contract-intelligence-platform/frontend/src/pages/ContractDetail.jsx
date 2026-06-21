@@ -149,7 +149,8 @@ const ContractDetail = () => {
   };
 
   const handleDownloadPDFReport = () => {
-    window.open(`http://localhost:5000/api/contracts/${id}/report`, '_blank');
+    const API_URL = import.meta.env.VITE_API_URL || 'https://contract-summarizer-gpra.onrender.com/api';
+    window.open(`${API_URL}/contracts/${id}/report`, '_blank');
   };
 
   const getRiskColor = (level) => {

@@ -29,7 +29,8 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://contract-summarizer-gpra.onrender.com/api';
+      const response = await axios.post(`${API_URL}/auth/login`, {
         email,
         password
       });
@@ -60,7 +61,8 @@ const Login = () => {
     setForgotLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/forgot-password', {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://contract-summarizer-gpra.onrender.com/api';
+      const response = await axios.post(`${API_URL}/auth/forgot-password`, {
         email: forgotEmail
       });
 
