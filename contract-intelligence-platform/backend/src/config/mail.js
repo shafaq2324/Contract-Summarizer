@@ -79,28 +79,23 @@ const transporter = {
             return { messageId: "sendgrid" };
         }
 
-        // 3. Brevo (Sendinblue) HTTP API
+        // 3. Brevo (Sendinblue) HTTP API using official SDK
         if (process.env.BREVO_API_KEY) {
-            console.log("Sending email via Brevo HTTP API...");
-            const response = await fetch("https://api.brevo.com/v3/smtp/email", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "api-key": process.env.BREVO_API_KEY
+            console.log("Sending email via official Brevo SDK...");
+            const { BrevoClient } = require("@getbrevo/brevo");
+            const client = new BrevoClient({ apiKey: process.env.BREVO_API_KEY });
+            
+            const result = await client.transactionalEmails.sendTransacEmail({
+                sender: { 
+                    name: "ContractIQ", 
+                    email: from || process.env.EMAIL_USER || "no-reply@contractiq.com" 
                 },
-                body: JSON.stringify({
-                    sender: { name: "ContractIQ", email: from || process.env.EMAIL_USER || "no-reply@contractiq.com" },
-                    to: [{ email: to }],
-                    subject: subject,
-                    htmlContent: html
-                })
+                to: [{ email: to }],
+                subject: subject,
+                htmlContent: html
             });
 
-            if (!response.ok) {
-                const errText = await response.text();
-                throw new Error(`Brevo API failed: ${errText}`);
-            }
-            return { messageId: "brevo" };
+            return { messageId: result.messageId || "brevo" };
         }
 
         // 4. Default Fallback to SMTP
