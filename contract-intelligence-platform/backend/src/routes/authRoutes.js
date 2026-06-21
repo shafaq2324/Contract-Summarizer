@@ -15,7 +15,7 @@ const validationMiddleware = require(
 const {
     registerValidation,
     loginValidation,
-} = require("../validators/authValidator");
+} = require("../validators/authvalidator");
 
 const authMiddleware = require(
     "../middleware/authMiddleware"
