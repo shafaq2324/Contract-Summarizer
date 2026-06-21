@@ -152,8 +152,11 @@ exports.forgotPassword = async (req, res) => {
             [resetToken, expiry, user.id]
         );
 
-        const resetLink =
-            `http://localhost:5173/reset-password/${resetToken}`;
+        let clientOrigin = req.get("origin") || process.env.CLIENT_URL || process.env.VERCEL_URL || "http://localhost:5173";
+        if (clientOrigin.endsWith("/")) {
+            clientOrigin = clientOrigin.slice(0, -1);
+        }
+        const resetLink = `${clientOrigin}/reset-password/${resetToken}`;
 
         try {
             await transporter.sendMail({
@@ -192,7 +195,7 @@ exports.forgotPassword = async (req, res) => {
             console.log("=======================================================\n");
 
             return res.json({
-                message: "Password reset initiated successfully. (Check backend server console for the reset link).",
+                message: "Password reset initiated successfully.",
                 resetLink: resetLink,
             });
         }
