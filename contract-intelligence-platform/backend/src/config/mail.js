@@ -87,8 +87,8 @@ const transporter = {
             
             const result = await client.transactionalEmails.sendTransacEmail({
                 sender: { 
-                    name: "ContractIQ", 
-                    email: from || process.env.EMAIL_USER || "no-reply@contractiq.com" 
+                    name: process.env.BREVO_SENDER_NAME || "ContractIQ", 
+                    email: process.env.BREVO_SENDER_EMAIL || from || process.env.EMAIL_USER || "no-reply@contractiq.com" 
                 },
                 to: [{ email: to }],
                 subject: subject,
